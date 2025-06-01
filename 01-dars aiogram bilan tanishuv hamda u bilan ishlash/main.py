@@ -8,7 +8,7 @@ from aiogram.types import Message
 
 load_dotenv()  # 👈 BU YERDA .env faylni yuklaymiz
 
-TOKEN = getenv("BOT_TOKEN")
+TOKEN = "8190004711:AAHg5lhFhf4BfGDzmP07cxIXa5Y92elDwBE"
 dp = Dispatcher()
 
 
