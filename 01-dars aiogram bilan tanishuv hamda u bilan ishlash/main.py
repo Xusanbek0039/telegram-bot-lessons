@@ -18,10 +18,7 @@ dp = Dispatcher()
 @dp.message(Command("start"))
 async def command_start_handler(message: Message) -> None:
     await message.answer("Hello! I'm a bot created with aiogram.")
-    
-@dp.message(Command("help"))
-async def command_help_handler(message: Message) -> None:
-    await message.answer("Help comand ishga tushdi!")
+
 
 async def main() -> None:
     bot = Bot(token=TOKEN)
