@@ -1,86 +1,91 @@
 # pip install aiogram wikipedia
 
-
-
 """
-WikiBot: Telegram orqali Wikipedia'dan ma'lumot izlovchi bot
+Wikipedia Telegram Bot (Aiogram 3.x uchun)
 Muallif: @it_creative
-Kutubxonalar: aiogram, wikipedia
+
+📌 Ushbu bot foydalanuvchi yuborgan mavzu bo‘yicha Wikipedia'dan qisqacha ma'lumot topadi va jo‘natadi.
 """
 
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
-from aiogram.utils import executor
+import asyncio
 import wikipedia
+from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
+from aiogram.types import Message
+from aiogram.filters import CommandStart
+from aiogram.utils.markdown import hbold
+from aiogram.client.default import DefaultBotProperties  # ✅ Yangi aiogram uchun kerak
 
 # Wikipedia tilini o'zbek tiliga sozlaymiz
 wikipedia.set_lang("uz")
 
-# Telegram bot token (BotFather'dan olingan tokeningizni shu yerga yozing)
-API_TOKEN = "YOUR_BOT_TOKEN_HERE"
+# Bot tokeningizni shu yerga yozing
+API_TOKEN = "BOT_TOKENINGIZNI_BU_YERGA_KIRITING"  # ❗ E'tibor: tokenni GitHub yoki YouTube'ga oshkor qilmang
 
-# Bot va dispatcher obyektlarini yaratish
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+# ✅ Bot obyektini yaratamiz (ParseMode.HTML endi `default` orqali uzatiladi)
+bot = Bot(
+    token=API_TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+
+# Dispatcher - botga kelgan xabarlarni boshqaradi
+dp = Dispatcher()
 
 
-@dp.message_handler(commands=['start', 'help'])
-async def send_welcome(message: Message):
+@dp.message(CommandStart())
+async def start_handler(message: Message):
     """
-    /start yoki /help komandasi yuborilganda foydalanuvchiga javob beruvchi funksiya
-
+    /start komandasi yuborilganda ishga tushadi.
+    
     Args:
-        message (Message): Foydalanuvchidan kelgan telegram xabari
-
-    Returns:
-        None
+        message (Message): Foydalanuvchidan kelgan Telegram xabari
     """
-    await message.reply(
-        "Salom! 👋\n"
-        "Menga istalgan mavzuni yozing (masalan: Python, Samarkand, O'zbekiston), "
-        "va men sizga Wikipedia'dan qisqacha ma'lumot beraman.\n\n"
-        "🧠 Misol: `Sun'iy intellekt`\n"
-        "Yordam uchun: /help"
+    await message.answer(
+        f"Salom {hbold(message.from_user.full_name)}! 👋\n"
+        "Menga istalgan mavzuni yozing va men Wikipedia'dan ma'lumot topib beraman.\n\n"
+        "🧠 Misol: Python, O'zbekiston, Samarkand"
     )
 
 
-@dp.message_handler()
-async def wiki_search(message: Message):
+@dp.message()
+async def wiki_handler(message: Message):
     """
-    Foydalanuvchi tomonidan yuborilgan matn bo‘yicha Wikipedia’da izlash va javob yuborish
+    Foydalanuvchi yuborgan matn bo‘yicha Wikipedia’da izlab, natijani qaytaradi.
 
     Args:
-        message (Message): Telegram foydalanuvchisidan kelgan xabar
-
-    Returns:
-        None
+        message (Message): Foydalanuvchidan kelgan xabar
     """
-    search_text = message.text  # Foydalanuvchi yuborgan matn
+    query = message.text  # Izlanayotgan matn
 
     try:
-        # Wikipedia'dan qisqacha izohni olish
-        summary = wikipedia.summary(search_text)
-
-        # Topilgan matnni foydalanuvchiga yuborish
-        await message.reply(summary)
-
-    except wikipedia.exceptions.PageError:
-        # Mavzu topilmagan holat
-        await message.reply("Kechirasiz, bu mavzu bo‘yicha hech narsa topilmadi. ❌")
+        result = wikipedia.summary(query)  # Wikipedia'dan qisqacha matn
+        await message.answer(result)
 
     except wikipedia.exceptions.DisambiguationError as e:
-        # Juda ko'p variantlar mavjud bo‘lsa (noaniqlik)
-        options = "\n".join(e.options[:5])
-        await message.reply(f"Bu so'z bir nechta ma'noga ega:\n\n{options}\n\nAniqroq yozing.")
+        # Bir nechta ma'noli maqolalar topilsa
+        variants = "\n".join(e.options[:5])
+        await message.answer(
+            f"Bu so‘z bir nechta ma'noga ega:\n{variants}\n\n"
+            "Iltimos, mavzuni aniqroq yozing. 🔍"
+        )
 
-    except Exception as e:
-        # Boshqa xatoliklar
-        await message.reply(f"Xatolik yuz berdi: {e}")
+    except wikipedia.exceptions.PageError:
+        # Maqola topilmasa
+        await message.answer("Kechirasiz, bu mavzu bo‘yicha hech narsa topilmadi. ❌")
+
+    except Exception as err:
+        # Kutilmagan xatoliklar
+        await message.answer(f"Xatolik yuz berdi: {err}")
 
 
+async def main():
+    """
+    Botni ishga tushiruvchi asosiy funksiya
+    """
+    print("✅ Bot ishga tushdi...")
+    await dp.start_polling(bot)
+
+
+# Dastur boshlanishi
 if __name__ == "__main__":
-    """
-    Botni ishga tushurish uchun asosiy blok.
-    skip_updates=True — eski xabarlarni ko'rmaslik uchun
-    """
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
