@@ -3,7 +3,7 @@
 """
 Wikipedia Telegram Bot (Aiogram 3.x uchun)
 Muallif: @it_creative
-
+Mentor: Suyunov Husan
 📌 Ushbu bot foydalanuvchi yuborgan mavzu bo‘yicha Wikipedia'dan qisqacha ma'lumot topadi va jo‘natadi.
 """
 
@@ -20,7 +20,7 @@ from aiogram.client.default import DefaultBotProperties  # ✅ Yangi aiogram uch
 wikipedia.set_lang("uz")
 
 # Bot tokeningizni shu yerga yozing
-API_TOKEN = "BOT_TOKENINGIZNI_BU_YERGA_KIRITING"  # ❗ E'tibor: tokenni GitHub yoki YouTube'ga oshkor qilmang
+API_TOKEN = "8083728455:AAFdKBNykypbOpipRgLpZEZXsjEnKy2n8B4"  # ❗ E'tibor: tokenni GitHub yoki YouTube'ga oshkor qilmang
 
 # ✅ Bot obyektini yaratamiz (ParseMode.HTML endi `default` orqali uzatiladi)
 bot = Bot(
