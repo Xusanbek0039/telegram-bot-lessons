@@ -53,3 +53,10 @@ async def ask_openai(message: Message):
 # Botni ishga tushirish
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
+
+
+# Rasm yuborish
+# https://api.telegram.org/bot8083728455:AAFdKBNykypbOpipRgLpZEZXsjEnKy2n8B4/sendPhoto?chat_id=7336586209&photo=https://ubuntu.com/wp-content/uploads/c9f4/visualstudio_code-card.png
+# Matin yozish
+# https://api.telegram.org/bot8083728455:AAFdKBNykypbOpipRgLpZEZXsjEnKy2n8B4/sendMessage?chat_id=7336586209&text=Salom%20dunyo
