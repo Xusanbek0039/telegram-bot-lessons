@@ -35,15 +35,15 @@ async def ask_openai(message: Message):
     try:
         # OpenAI API chaqiruv
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # yoki gpt-4 agar sizda mavjud bo‘lsa
+            model="gpt-4o",  # yoki gpt-4 agar sizda mavjud bo‘lsa
             messages=[
                 {"role": "system", "content": "Siz foydalanuvchiga yordam beruvchi Telegram botisiz."},
                 {"role": "user", "content": user_input}
             ],
             max_tokens=1000,
-            temperature=0.7,
+            temperature=1.5,
         )
-
+        
         reply = response["choices"][0]["message"]["content"]
         await message.reply(reply)
 
